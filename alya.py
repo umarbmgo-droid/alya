@@ -6,7 +6,7 @@ import asyncio
 import time
 
 # ===== CONFIG =====
-TOKEN = "YOUR_TOKEN_HERE"
+TOKEN = "MTQ3NzA5MzcxMjE2NDE2MzU5NQ.G3Mygs.QkCulO8bNWWyykMF7c7r288rgItzJc6RfmIFGU"
 OWNER_ID = 361069640962801664
 PREFIX = "-"
 START_TIME = time.time()
@@ -200,4 +200,5 @@ if __name__ == "__main__":
     except discord.LoginFailure:
         print("Invalid token")
     except Exception as e:
+
         print(f"Error: {e}")
